@@ -7,7 +7,7 @@ const getBuilderConfig = (builders) => {
     let obj = {};
     builders.forEach(item => {
         obj[item] = {
-            desc: _syntax.NOTE + builders,
+            desc: _syntax.NOTE +' '+ builders,
             demandOption: _syntax.TRUE,
             type: _syntax.STRING
         }
@@ -35,13 +35,14 @@ const getReadNoteConfig = () => {
     return {
         aliases: ['open', 'OPEN', 'Open'],
         desc: 'open note as readonly mode',
+        builder: getBuilderConfig(_builders.TYPE_2)
     }
 }
 
 const getListNoteConfig = () => {
     return {
         aliases: ['search', 'SEARCH', 'Search'],
-        desc: 'show list of notes based on title',
+        desc: 'show list of notes based on title'
     }
 }
 
