@@ -119,14 +119,32 @@ const removeNote = (data) => {
  * readNote / open note as readonly mode
  * method type: public
  */
-const readNote = () => {
-    _notesMsg.whiteboard(`read`)
+const readNote = (data) => {
+    try {
+        const noteJson = loadNote();
+        _notesMsg.info('Searching...');
+        const index = _noteValidation.findNote(noteJson, data[_builders.TYPE_2[0]]);
+        if (index > -1) {
+            _notesMsg.info('Here is your note !!!');
+            let note='\r\n**********************************\r\n';
+            Object.keys(noteJson[index]).forEach(key => {
+                note += key + ': ';
+                note += noteJson[index][key] + '\r\n';
+            });
+            note +='**********************************\r\n';
+            _notesMsg.whiteboard(note);
+        } else {
+            _notesMsg.warn('No note found !!!');
+        }
+    } catch (e) {
+        _notesMsg.error(e);
+    }
 }
 /**
  * listNote / search note based on title
  * method type: public
  */
-const listNote = () => {
+const listNote = (data) => {
     _notesMsg.whiteboard(`list`)
 }
 /**

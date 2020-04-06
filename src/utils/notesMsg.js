@@ -46,7 +46,7 @@ const successMsg = msg =>{
  * @param {string} msg string
  */
 const whiteboardMsg = msg =>{
-    log(chalk.bgWhite.black(msg))
+    log(chalk.whiteBright(msg))
 }
 /**
  * export statement

@@ -9,13 +9,13 @@ const _notesMsg = require('./notesMsg');
  * commandList
  */
 const commandList = () => {
-    try{
-        let arr=[];
+    try {
+        let arr = [];
         Object.keys(_command).forEach(key => {
             arr.push(_command[key]);
         });
         return arr;
-    }catch(e){
+    } catch (e) {
         _notesMsg.error(e);
     }
 };
@@ -24,14 +24,13 @@ const commandList = () => {
  * @param {*} command 
  */
 const configuration = command => {
-    try{
-        let config = null;
-        config = command === _command.ADD_NOTE && _notesBL.configurations.addNote();
-        config = command === _command.REMOVE_NOTE && _notesBL.configurations.removeNote();
-        config = command === _command.READ_NOTE && _notesBL.configurations.readNote();
-        config = command === _command.LIST_NOTE && _notesBL.configurations.listNote();
-        return config;
-    }catch(e){
+    try {
+        //modern switch case
+        return (command === _command.ADD_NOTE && _notesBL.configurations.addNote()) ||
+            (command === _command.REMOVE_NOTE && _notesBL.configurations.removeNote()) ||
+            (command === _command.READ_NOTE && _notesBL.configurations.readNote()) ||
+            (command === _command.LIST_NOTE && _notesBL.configurations.listNote());
+    } catch (e) {
         _notesMsg.error(e);
     }
 }
@@ -41,14 +40,13 @@ const configuration = command => {
  * @param {*} data 
  */
 const operations = (command, data) => {
-    try{
-        let operator = null;
-        operator = command === _command.ADD_NOTE && _notes.add(data);
-        operator = command === _command.REMOVE_NOTE && _notes.remove(data);
-        operator = command === _command.READ_NOTE && _notes.read();
-        operator = command === _command.LIST_NOTE && _notes.list();
-        return operator;
-    }catch(e){
+    try {
+        //modern switch case
+        return (command === _command.ADD_NOTE && _notes.add(data)) ||
+            (command === _command.REMOVE_NOTE && _notes.remove(data)) ||
+            (command === _command.READ_NOTE && _notes.read(data)) ||
+            (command === _command.LIST_NOTE && _notes.list(data));
+    } catch (e) {
         _notesMsg.error(e);
     }
 }
