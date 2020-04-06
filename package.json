@@ -1,0 +1,17 @@
+{
+  "name": "notes-app",
+  "version": "1.0.0",
+  "description": "A simple notes app. Language- Node JS",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Arka Das",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "fs": "0.0.1-security",
+    "validator": "^13.0.0",
+    "yargs": "^15.3.1"
+  }
+}
