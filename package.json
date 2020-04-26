@@ -1,10 +1,17 @@
 {
   "name": "notes-app",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A simple notes app. Language- Node JS",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node app.js",
+    "note-help":"node app.js --help",
+    "note-version":"node app.js --version",
+    "note-add":"node app.js add",
+    "note-remove":"node app.js remove",
+    "note-open":"node app.js open",
+    "note-search":"node app.js search"
   },
   "author": "Arka Das",
   "license": "ISC",
