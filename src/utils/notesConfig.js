@@ -1,8 +1,7 @@
 /**
  * import statement
  */
-const _command = require('../constant/constant').COMMAND;
-const _notesBL = require('./notesBL');
+const _constant= require('../constant/constant');
 const _notes = require('./notes');
 const _notesMsg = require('./notesMsg');
 /**
@@ -11,25 +10,39 @@ const _notesMsg = require('./notesMsg');
 const commandList = () => {
     try {
         let arr = [];
-        Object.keys(_command).forEach(key => {
-            arr.push(_command[key]);
-        });
+        for (const _f of _constant.FEATURES) {
+            arr.push(_f.command);
+        }
         return arr;
     } catch (e) {
         _notesMsg.error(e);
     }
 };
 /**
+ * getBuilderConfig
+ * @param {*} builders 
+ */
+const getBuilderConfig = (builders) => {
+    let obj = {};
+    builders.forEach(item => {
+        obj[item.name] = {
+            desc: _constant.SYNTAX.NOTE +' '+ item.name,
+            demandOption: item.required,
+            type: item.type
+        }
+    });
+    return obj;
+}
+/**
  * configuration
  * @param {*} command 
  */
-const configuration = command => {
+const configuration = index => {
     try {
-        //modern switch case
-        return (command === _command.ADD_NOTE && _notesBL.configurations.addNote()) ||
-            (command === _command.REMOVE_NOTE && _notesBL.configurations.removeNote()) ||
-            (command === _command.READ_NOTE && _notesBL.configurations.readNote()) ||
-            (command === _command.LIST_NOTE && _notesBL.configurations.listNote());
+        return {
+            ..._constant.FEATURES[index].props,
+            builder: getBuilderConfig(_constant.BUILDERS[_constant.FEATURES[index].builderId])
+        }
     } catch (e) {
         _notesMsg.error(e);
     }
@@ -39,13 +52,9 @@ const configuration = command => {
  * @param {*} command 
  * @param {*} data 
  */
-const operations = (command, data) => {
+const operations = (func, data) => {
     try {
-        //modern switch case
-        return (command === _command.ADD_NOTE && _notes.add(data)) ||
-            (command === _command.REMOVE_NOTE && _notes.remove(data)) ||
-            (command === _command.READ_NOTE && _notes.read(data)) ||
-            (command === _command.LIST_NOTE && _notes.list(data));
+        return _notes[func](data);
     } catch (e) {
         _notesMsg.error(e);
     }

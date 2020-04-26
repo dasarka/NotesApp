@@ -10,6 +10,7 @@ const _noteValidation = require('./notesBL').validation;
  */
 const _builders = _constant.BUILDERS;
 const _config = _constant.CONFIG;
+const _notesProps = _constant.SYNTAX.NOTES_PROPS;
 /**
  * getTimeStamp
  * method type: private
@@ -24,14 +25,14 @@ const getTimeStamp = () => {
  * getStorageName
  * method type: private
  */
-const getStorageName = () =>{
-    return _config.APP_NAME+_config.STORAGE_TYPE;
+const getStorageName = () => {
+    return _config.APP_NAME + _config.STORAGE_TYPE;
 }
 /**
- * loadNote
+ * load
  * method type: private
  */
-const loadNote = () => {
+const load = () => {
     try {
         _notesMsg.info('Loading earlier notes...');
         _notesMsg.info('Processing...');
@@ -45,11 +46,11 @@ const loadNote = () => {
     }
 }
 /**
- * saveNote
+ * save
  * method type: private
  * @param {*} note 
  */
-const saveNote = (note) => {
+const save = (note) => {
     try {
         _notesMsg.info('Saving all notes...');
         _notesMsg.info('Processing...');
@@ -65,27 +66,27 @@ const saveNote = (note) => {
  * method type: public
  * @param {*} data 
  */
-const addNote = (data) => {
+const add = (data) => {
     try {
-        let noteJson = loadNote();
+        let noteJson = load();
         let note = {
             ...getTimeStamp()
         };
         _notesMsg.info('Adding new note...');
         _notesMsg.info('Validating new note...');
         let validation = false;
-        const duplicateNotes = _noteValidation.duplicateNotes(noteJson, data[_builders.TYPE_1[0]]);
+        const duplicateNotes = _noteValidation.duplicateNotes(noteJson, data[_notesProps.title]);
         duplicateNotes && _notesMsg.warn('Oops!!! Note title already exist, please provide some differnt title');
 
         validation = duplicateNotes;
         if (!validation) {
             _notesMsg.success('New note validated successfully !!!');
-            _builders.TYPE_1.forEach(item => {
-                note[item] = data[item]
-            });
+            for (const item of _builders[_constant.SYNTAX.BuilderIds.TYPE_1]) {
+                note[item.name] = data[item.name];
+            }
             noteJson.push(note);
             _notesMsg.success('New note added successfully !!!');
-            saveNote(noteJson);
+            save(noteJson);
         } else {
             _notesMsg.error('Validation failed !!!');
         }
@@ -98,16 +99,16 @@ const addNote = (data) => {
  * method type: public
  * @param {*} data 
  */
-const removeNote = (data) => {
+const remove = (data) => {
     try {
-        let noteJson = loadNote();
+        let noteJson = load();
         _notesMsg.info('Removing note...');
         _notesMsg.info('Searching...');
-        const index = _noteValidation.findNote(noteJson, data[_builders.TYPE_2[0]]);
+        const index = _noteValidation.findNote(noteJson, data[_notesProps.title]);
         if (index > -1) {
             noteJson.splice(index, 1);
             _notesMsg.success('Selected note removed successfully !!!');
-            saveNote(noteJson);
+            save(noteJson);
         } else {
             _notesMsg.warn('No note found !!!');
         }
@@ -119,19 +120,19 @@ const removeNote = (data) => {
  * readNote / open note as readonly mode
  * method type: public
  */
-const readNote = (data) => {
+const read = (data) => {
     try {
-        const noteJson = loadNote();
-        _notesMsg.info('Searching...');
-        const index = _noteValidation.findNote(noteJson, data[_builders.TYPE_2[0]]);
+        const noteJson = load();
+        _notesMsg.info('Searching...',noteJson);
+        const index = _noteValidation.findNote(noteJson, data[_notesProps.title]);
         if (index > -1) {
             _notesMsg.info('Here is your note !!!');
-            let note='\r\n**********************************\r\n';
+            let note = '\r\n**********************************\r\n';
             Object.keys(noteJson[index]).forEach(key => {
                 note += key + ': ';
                 note += noteJson[index][key] + '\r\n';
             });
-            note +='**********************************\r\n';
+            note += '**********************************\r\n';
             _notesMsg.whiteboard(note);
         } else {
             _notesMsg.warn('No note found !!!');
@@ -144,20 +145,31 @@ const readNote = (data) => {
  * listNote / search note based on title
  * method type: public
  */
-const listNote = (data) => {
-    _notesMsg.whiteboard(`list`)
-}
-/**
- * updateNote/ search note based on title and update it's body
- * method type: public
- */
+const list = (data) => {
+    try {
+        const noteJson = load();
+        _notesMsg.info('Calculating...');
+        _notesMsg.info('Here is your search result !!!');
+        let index = 0;
+        let keyword = (data && data[_notesProps.keyword]) || '';
+        let searchRes = '\r\n**********************************\r\n';
+        for (const note of noteJson) {
+            note.title.indexOf(keyword) > -1 && (++index, searchRes += '~ ' + note.title + '\r\n');
+        }
+        searchRes += '\r\nTotal Count:- ' + index + '\r\n';
+        searchRes += '**********************************\r\n';
+        _notesMsg.whiteboard(searchRes);
 
+    } catch (e) {
+        _notesMsg.error(e);
+    }
+}
 /**
  * export statement
  */
 module.exports = {
-    add: addNote,
-    remove: removeNote,
-    read: readNote,
-    list: listNote
+    addNote: add,
+    removeNote: remove,
+    readNote: read,
+    listNote: list
 };
